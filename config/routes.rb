@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :study_plans
   root "dashboard#show"
   get "dashboard/show"
 
