@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  root "sessions#new"
+  root "dashboard#show"
+  get "dashboard/show"
+
   resource :session
   resources :passwords, param: :token
   resource :registration, only: %i[new create]
