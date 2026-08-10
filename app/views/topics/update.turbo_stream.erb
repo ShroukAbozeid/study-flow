@@ -1,0 +1,5 @@
+<%= turbo_stream.update dom_id(@topic) do %>
+  <li class="mb-2">
+    <%= render partial: "topics/topic", locals: { topic: @topic } %>
+  </li>
+<% end %>

@@ -1,11 +1,5 @@
 <div class="mx-auto md:w-2/3 w-full">
-  <% if alert = flash[:alert] %>
-    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
-  <% end %>
-
-  <% if notice = flash[:notice] %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
+  <%= render "shared/alert" %>
 
   <h1 class="font-bold text-4xl">Update Study Plan</h1>
 
@@ -21,6 +15,23 @@
     <div class="my-5">
       <%= form.number_field :daily_hour, placeholder: "Enter daily hours", class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
     </div>
+
+    <%= turbo_frame_tag "topics" do %>
+      <h2 class="font-bold text-2xl mt-6">Topics</h2>
+      <ul class="mt-4">
+        <% @study_plan.topics.each do |topic| %>
+          <%= turbo_frame_tag dom_id(topic) do %>
+            <li class="mb-2">
+              <%= render "topics/topic", topic: topic %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <%= turbo_frame_tag "new_topic" do %>
+      <%= link_to "Add a Topic", new_topic_path(study_plan_id: @study_plan.id), class: "text-blue-600 underline" %>
+    <% end %>
 
     <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
       <div class="inline">

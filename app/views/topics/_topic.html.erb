@@ -1,0 +1,3 @@
+<strong><%= topic.name %></strong> - <%= topic.description %> (Estimated Hours: <%= topic.estimated_hours %>)
+<%= link_to "Edit", edit_topic_path(topic), class: "text-blue-600 underline ml-2" %>
+<%= link_to "Delete", topic_path(topic),  data: { turbo_method: :delete, turbo_confirm: 'Are you sure?'}, class: "text-red-600 underline ml-2" %>
