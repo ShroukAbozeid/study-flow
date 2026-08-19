@@ -9,3 +9,14 @@
     <%= link_to "Start a study session", new_study_session_path(topic_id: @study_session.topic_id), class: "text-blue-600 underline ml-2"%>
   <% end%>
 <% end %>
+
+
+<% if @study_session.finished_at %>
+  <%= turbo_stream.remove "active_#{@study_session.id}"%>
+  <%= turbo_stream.append "completed_sessions" do %>
+    <p><%= @study_session.topic.study_plan.name %> - <%= @study_session.topic.name %></p>
+    <li class="mb-2">
+      <%= render "session", session: @study_session %>
+    </li>
+  <% end %>
+<%end %>
