@@ -1,3 +1,19 @@
 <strong><%= topic.name %></strong> - <%= topic.description %> (Estimated Hours: <%= topic.estimated_hours %>)
 <%= link_to "Edit", edit_topic_path(topic), class: "text-blue-600 underline ml-2" %>
 <%= link_to "Delete", topic_path(topic),  data: { turbo_method: :delete, turbo_confirm: 'Are you sure?'}, class: "text-red-600 underline ml-2" %>
+
+<%= turbo_frame_tag "#{topic.id}_new_study_session" do %>
+  <% if topic.study_sessions.active.empty?%>
+    <%= link_to "Start a study session", new_study_session_path(topic_id: topic.id), class: "text-blue-600 underline ml-2"%>
+  <% end %>
+<% end %>
+
+<ul class="mt-4">Study Sessions:
+  <%= turbo_frame_tag "#{topic.id}_sessions" do %>
+    <% topic.study_sessions.each do |study_session| %>
+      <%= turbo_frame_tag study_session do %>
+        <li class="mb-2"><%= render "study_sessions/session", session: study_session %></li>
+      <%end%>
+    <% end %>
+  <% end %>
+</ul>

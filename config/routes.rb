@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :study_sessions do
+    patch :complete, on: :member
+  end
   resources :study_plans
   resources :topics
   root "dashboard#show"

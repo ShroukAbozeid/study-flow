@@ -1,5 +1,6 @@
 class Topic < ApplicationRecord
   belongs_to :study_plan
+  has_many :study_sessions, dependent: :destroy
 
   validates :name, :estimated_hours, presence: true
   validates :estimated_hours, numericality: { greater_than: 0 }

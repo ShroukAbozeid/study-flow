@@ -1,0 +1,11 @@
+<%= turbo_stream.update dom_id(@study_session) do %>
+  <li class="mb-2">
+    <%= render "session", session: @study_session %>
+  </li>
+<% end %>
+
+<% if @study_session.topic.study_sessions.active.empty? %>
+  <%= turbo_stream.update "#{@study_session.topic_id}_new_study_session" do %>
+    <%= link_to "Start a study session", new_study_session_path(topic_id: @study_session.topic_id), class: "text-blue-600 underline ml-2"%>
+  <% end%>
+<% end %>
