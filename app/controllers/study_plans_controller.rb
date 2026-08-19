@@ -1,4 +1,7 @@
 class StudyPlansController < ApplicationController
+  def show
+    @study_plan = Current.user.study_plans.find(params[:id])
+  end
   def new
     @study_plan = Current.user.study_plans.build
   end
@@ -19,7 +22,7 @@ class StudyPlansController < ApplicationController
   def update
     @study_plan = Current.user.study_plans.find(params[:id])
     if @study_plan.update(study_plan_params)
-      redirect_to dashboard_show_path, notice: "Study plan updated successfully."
+      redirect_to study_plan_path(@study_plan), notice: "Study plan updated successfully."
     else
       render :edit
     end
