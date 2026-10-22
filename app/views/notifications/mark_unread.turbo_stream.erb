@@ -1,0 +1,8 @@
+<%= turbo_stream.update @notification do %>
+  <div class="border border-green-300 p-4 mb-4">
+    <h2 class="font-bold text-xl"><%= @notification.title %></h2>
+    <p><%= @notification.content %></p>
+    <small><%= @notification.created_at.strftime("%B %d, %Y") %></small>
+    <%= link_to "Mark as Read", mark_read_notification_path(@notification), data: { turbo_method: :patch }, class: "text-blue-600 underline ml-2" %>
+  </div>
+<% end %>

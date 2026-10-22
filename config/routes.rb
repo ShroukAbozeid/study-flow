@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  resources :notifications, only: %i[index show] do
+    member do
+      patch :mark_read
+      patch :mark_unread
+    end
+    collection do
+      patch :mark_all_read
+    end
+  end
   resources :study_sessions do
     patch :complete, on: :member
   end
