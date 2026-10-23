@@ -8,12 +8,11 @@
   <% end %>
 <% end %>
 
+<%= turbo_stream_from Current.user, :sessions %>
 <ul class="mt-4">Study Sessions:
   <%= turbo_frame_tag "#{topic.id}_sessions" do %>
     <% topic.study_sessions.each do |study_session| %>
-      <%= turbo_frame_tag study_session do %>
-        <li class="mb-2"><%= render "study_sessions/session", session: study_session %></li>
-      <%end%>
+      <%= render "study_sessions/session", session: study_session %></li>
     <% end %>
   <% end %>
 </ul>

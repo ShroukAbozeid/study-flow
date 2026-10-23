@@ -1,7 +1,5 @@
 <%= turbo_stream.append "#{@study_session.topic_id}_sessions" do %>
-  <%= turbo_frame_tag dom_id(@study_session) do %>
-    <li><%= render "session", session: @study_session %><li>
-  <% end %>
+  <%= render "session", session: @study_session %>
 <% end %>
 
 <%= turbo_stream.update "#{@study_session.topic_id}_new_study_session", "" %>

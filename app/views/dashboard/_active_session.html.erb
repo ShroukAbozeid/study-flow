@@ -1,0 +1,4 @@
+<%= turbo_frame_tag "active_study_session_#{study_session.id}" do%>
+  <p><%= study_session.topic.study_plan.name %> - <%= study_session.topic.name %></p>
+  <%= render "study_sessions/session", session: study_session %>
+<%end%>
