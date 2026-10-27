@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_27_150934) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_27_165618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,6 +60,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_150934) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -113,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_150934) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "notifications", "users"
+  add_foreign_key "reports", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "study_plans", "users"
   add_foreign_key "study_sessions", "topics"

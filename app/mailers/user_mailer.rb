@@ -3,4 +3,11 @@ class UserMailer < ApplicationMailer
     @notification = params[:notification]
     mail(to: @notification.user.email_address, subject: @notification.title)
   end
+
+  def report_email
+    @user = params[:user]
+    @report = params[:report]
+    attachments[@report.file.filename.to_s] = @report.file.download
+    mail(to: @user.email_address, subject: "Your Weekly Progress Report is Ready")
+  end
 end

@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :topics, through: :study_plans
   has_many :study_sessions, through: :topics
+  has_many :reports, dependent: :destroy
 
   validates :email_address, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true
