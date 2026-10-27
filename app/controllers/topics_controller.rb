@@ -46,6 +46,9 @@ class TopicsController < ApplicationController
   private
 
   def topic_params
-    params.require(:topic).permit(:name, :description, :estimated_hours, :study_plan_id)
+    params.require(:topic).permit(
+      :name, :description, :estimated_hours, :study_plan_id,
+      resources: []
+      )
   end
 end
