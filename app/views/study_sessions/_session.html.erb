@@ -1,6 +1,7 @@
 <%= turbo_frame_tag session do %>
   <li class="mb-2">
     <%= session.title %>
+    <%= link_to "View", study_session_path(session), class: "text-blue-600 underline ml-2",data: { turbo: false } %>
     <%= link_to "Edit", edit_study_session_path(session), class: "text-blue-600 underline ml-2" %>
 
     <% if !session.finished_at %>

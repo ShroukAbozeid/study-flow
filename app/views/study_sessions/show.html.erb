@@ -1,0 +1,32 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <%= render "shared/alert" %>
+
+  <h1 class="font-bold text-4xl">Study session</h1>
+  <%= turbo_frame_tag @study_session.topic do %>
+    <p><%= @study_session.topic.name %></p>
+    <%= turbo_frame_tag @study_session do %>
+      <div class="my-5">
+        <p class="text-sm font-medium text-gray-700">Title</p>
+        <p class="block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full"><%= @study_session.title %></p>
+      </div>
+
+      <div class="my-5 mx-2">
+        <p class="text-sm font-medium text-gray-700">Notes</p>
+        <div class="block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full"><%= @study_session.notes %></div>
+      </div>
+
+      <% if !@study_session.finished_at %>
+        <%= link_to "End this session", complete_study_session_path(@study_session), data: { turbo_method: :patch }, class: "text-blue-600 underline ml-2" %>
+      <% else %>
+        - Completed
+      <% end %>
+    <% end %>
+
+  <% end %>
+
+
+
+  <div class="mt-4 text-sm text-gray-500 sm:mt-0">
+    <%= link_to "Back to Study Plan", study_plan_path(@study_session.topic.study_plan), class: "text-gray-700 underline" %>
+  </div>
+</div>

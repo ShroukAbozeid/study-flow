@@ -58,6 +58,10 @@ class StudySessionsController < ApplicationController
     end
   end
 
+
+  def show
+    @study_session = StudySession.find(params[:id])
+  end
   private
 
   def study_session_params

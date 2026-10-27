@@ -1,4 +1,6 @@
 class StudySession < ApplicationRecord
+  has_rich_text :notes
+
   belongs_to :topic
   has_one :study_plan, through: :topic
 

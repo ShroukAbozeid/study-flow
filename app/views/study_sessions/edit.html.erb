@@ -5,14 +5,16 @@
   <%= turbo_frame_tag @study_session.topic do %>
     <p><%= @study_session.topic.name %></p>
     <%= turbo_frame_tag @study_session do %>
-      <%= form_with model: @study_session, class: "inline-flex" do |form| %>
+      <%= form_with model: @study_session do |form| %>
         <%= form.hidden_field :topic_id, value: @study_session.topic_id %>
         <div class="my-5">
-          <%= form.text_field :title, required: true, autofocus: true, placeholder: "name", class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
+          <%= form.label :title, "Title", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :title, required: true, autofocus: true, placeholder: "title", class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
         </div>
 
         <div class="my-5 mx-2">
-          <%= form.text_field :notes, placeholder: "notes", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
+          <%= form.label :notes, "Notes", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.rich_textarea :notes, placeholder: "notes", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
         </div>
 
         <div class="col-span-6 sm:flex sm:items-center sm:gap-4 mt-2">
