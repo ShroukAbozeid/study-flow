@@ -5,8 +5,12 @@ module Reports
     FILE_NAME = "weekly_progress".freeze
 
     def self.generate(user)
-      start_date = Date.current.beginning_of_week.beginning_of_day
-      end_date = Date.current.end_of_week.end_of_day
+      week_start = (user.study_preferences["week_start_day"] || "Monday").downcase.to_sym
+      user_zone = ActiveSupport::TimeZone[user.time_zone]
+      start_date = user_zone.now.beginning_of_week(week_start).beginning_of_day
+      start_date -= 1.week if start_date.to_date == user_zone.today
+      end_date = start_date.end_of_week(week_start).end_of_day
+
       user_study_sessions = StudySession.where(topic: user.topics)
       completed_this_week = user_study_sessions.where(finished_at: start_date..end_date)
       started_this_week = user_study_sessions.where(created_at: start_date..end_date)

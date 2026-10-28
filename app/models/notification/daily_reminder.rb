@@ -9,7 +9,7 @@ class Notification::DailyReminder < Notification
     <<-TEXT
     Don't forget to check your study plan today!
     You have #{user.study_plans.count} study plans.
-    and #{user.study_sessions.active.count} active sessions"
+    and #{user.study_sessions.active.count} active sessions
     TEXT
   end
 

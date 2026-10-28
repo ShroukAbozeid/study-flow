@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  namespace :settings do
+    resource :profile, only: %i[show update]
+    resource :study_preferences, only: %i[show update]
+  end
+
   resources :notifications, only: %i[index show] do
     member do
       patch :mark_read

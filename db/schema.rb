@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_27_165618) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_28_122812) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -113,7 +113,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_165618) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
+    t.string "name"
     t.string "password_digest", null: false
+    t.jsonb "study_preferences", default: {"week_start_day" => "Monday", "weekly_progress_report" => {"day" => "Sunday", "time" => "21:00", "enabled" => true}, "daily_reminder_notification" => {"time" => "08:00", "enabled" => true}}, null: false
+    t.string "time_zone", default: "UTC"
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
