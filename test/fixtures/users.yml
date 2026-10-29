@@ -1,0 +1,8 @@
+one:
+  email_address: "one@example.com"
+  name: "Example User"
+  password_digest: "password"
+
+two:  
+  email_address: "two@example.com"
+  password_digest: "password"

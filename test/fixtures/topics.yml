@@ -1,0 +1,11 @@
+one:
+  study_plan: one
+  name: First topic
+  estimated_hours: 3
+  position: 1
+
+two:
+  study_plan: two
+  name: Second topic
+  estimated_hours: 2
+  position: 1

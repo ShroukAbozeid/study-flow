@@ -27,10 +27,6 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-    store_accessor :study_preferences, :daily_reminder_notification,
-                                  :weekly_progress_report,
-                                  :week_start_day
-
   def preference(section, key)
     (public_send(section) || {}).with_indifferent_access[key]
   end
