@@ -1,6 +1,8 @@
 class AddFieldsToUsers < ActiveRecord::Migration[8.1]
   def change
-    add_column :users, :name, :string
-    add_column :users, :time_zone, :string, default: 'UTC'
+    change_table :users, bulk: true do |t|
+      t.string  :name
+      t.string  :time_zone, default: 'UTC'
+    end
   end
 end

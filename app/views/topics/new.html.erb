@@ -1,23 +1,18 @@
 <div class="mx-auto md:w-2/3 w-full">
   <%= render "shared/alert" %>
-
   <h1 class="font-bold text-4xl">Create Topic</h1>
-
   <%= turbo_frame_tag "new_topic" do %>
     <%= form_with model: @topic, class: "inline-flex" do |form| %>
       <%= form.hidden_field :study_plan_id, value: @topic.study_plan_id %>
       <div class="my-5">
         <%= form.text_field :name, required: true, autofocus: true, placeholder: "name", class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
       </div>
-
       <div class="my-5 mx-2">
         <%= form.text_field :description, placeholder: "description", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
       </div>
-
       <div class="my-5 mr-2">
         <%= form.number_field :estimated_hours, required: true, placeholder: "estimated hours", class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
       </div>
-
       <div class="col-span-6 sm:flex sm:items-center sm:gap-4 mt-2">
         <div class="inline">
           <%= form.submit "Add Topic", class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>

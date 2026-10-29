@@ -1,5 +1,4 @@
 <%= turbo_stream.append "#{@study_session.topic_id}_sessions" do %>
   <%= render "session", session: @study_session %>
 <% end %>
-
 <%= turbo_stream.update "#{@study_session.topic_id}_new_study_session", "" %>

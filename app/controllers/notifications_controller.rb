@@ -18,7 +18,7 @@ class NotificationsController < ApplicationController
   end
 
   def mark_all_read
-    Current.user.notifications.unread.update_all(read: true)
+    Current.user.notifications.unread.update_all(read: true) # rubocop:disable Rails/SkipsModelValidations
     redirect_to notifications_path, notice: "All notifications marked as read."
   end
 end

@@ -16,7 +16,6 @@
       <% end %>
     </ul>
   <% end %>
-
   <%= turbo_frame_tag "new_topic" do %>
     <%= link_to "Add a Topic", new_topic_path(study_plan_id: @study_plan.id), class: "text-blue-600 underline" %>
   <% end %>

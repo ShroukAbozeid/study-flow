@@ -3,7 +3,6 @@
     <%= session.title %>
     <%= link_to "View", study_session_path(session), class: "text-blue-600 underline ml-2",data: { turbo: false } %>
     <%= link_to "Edit", edit_study_session_path(session), class: "text-blue-600 underline ml-2" %>
-
     <% if !session.finished_at %>
       <%= link_to "End this session", complete_study_session_path(session), data: { turbo_method: :patch }, class: "text-blue-600 underline ml-2" %>
     <% else %>

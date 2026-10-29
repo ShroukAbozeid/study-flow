@@ -4,8 +4,7 @@
       <%= render partial: "topics/topic", locals: { topic: @topic } %>
     </li>
   <% end %>
- <% end %>
-
+<% end %>
 <%= turbo_stream.update "new_topic" do %>
   <%= link_to "Add a Topic", new_topic_path(study_plan_id: @topic.study_plan_id), class: "text-blue-600 underline" %>
 <% end %>

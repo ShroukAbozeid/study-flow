@@ -5,30 +5,24 @@
       <p class="text-base text-gray-500">
         Sign up to create your account.
       </p>
-
       <%= form_with url: registration_url, model: @user, method: :post, class: "contents" do |form| %>
         <div class="my-5">
           <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: "block shadow rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
         </div>
-
         <div class="my-5">
           <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
         </div>
-
         <div class="my-5">
           <%= form.password_field :password_confirmation, required: true, autocomplete: "current-password", placeholder: "Password confirmation", maxlength: 72, class: "block shadow rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
         </div>
-
         <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
           <div class="flex w-full items-center justify-between">
             <div class="inline">
               <%= form.submit "Sign up", class: "rounded-lg py-2 px-6 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
             </div>
-
             <div class="mt-4 text-sm text-gray-500 sm:mt-0">
               <%= link_to "Sign In", new_session_path, class: "text-gray-700 underline" %>
             </div>
-
             <div class="mt-4 text-sm text-gray-500 sm:mt-0">
               <%= link_to "Forgot password?", new_password_path, class: "text-gray-700 underline" %>
             </div>

@@ -2,44 +2,41 @@
   <%= render "shared/alert" %>
   <h1 class="font-bold text-4xl">Settings</h1>
   <%= form_with  url: settings_study_preferences_path, method: :patch, class: "contents" do |form| %>
-  <div class="my-5">
-    <p>Daily reminder</p>
-    <div class="mx-6">
-      <%= form.label "user[study_preferences][daily_reminder_notification][enabled]", "Enabled", class: "text-sm font-medium text-gray-700" %>
-      <%= form.checkbox "user[study_preferences][daily_reminder_notification][enabled]", checked: Current.user.preference(:daily_reminder_notification, :enabled), class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+    <div class="my-5">
+      <p>Daily reminder</p>
+      <div class="mx-6">
+        <%= form.label "user[study_preferences][daily_reminder_notification][enabled]", "Enabled", class: "text-sm font-medium text-gray-700" %>
+        <%= form.checkbox "user[study_preferences][daily_reminder_notification][enabled]", checked: Current.user.preference(:daily_reminder_notification, :enabled), class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+      </div>
+      <div class="mx-6">
+        <%= form.label "user[study_preferences][daily_reminder_notification][time]", "Time", class: "text-sm font-medium text-gray-700" %>
+        <%= form.time_field "user[study_preferences][daily_reminder_notification][time]", value:  Current.user.preference(:daily_reminder_notification, :time), class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+      </div>
     </div>
-    <div class="mx-6">
-      <%= form.label "user[study_preferences][daily_reminder_notification][time]", "Time", class: "text-sm font-medium text-gray-700" %>
-      <%= form.time_field "user[study_preferences][daily_reminder_notification][time]", value:  Current.user.preference(:daily_reminder_notification, :time), class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+    <div class="my-5">
+      <p>Weekly progress report</p>
+      <div class="mx-6">
+        <%= form.label "user[study_preferences][weekly_progress_report][enabled]", "Enabled", class: "text-sm font-medium text-gray-700"  %>
+        <%= form.checkbox "user[study_preferences][weekly_progress_report][enabled]", checked: Current.user.preference(:weekly_progress_report, :enabled)%>
+      </div>
+      <div class="mx-6">
+        <%= form.label "user[study_preferences][weekly_progress_report][time]", "Time", class: "text-sm font-medium text-gray-700"  %>
+        <%= form.time_field "user[study_preferences][weekly_progress_report][time]", value:  Current.user.preference(:weekly_progress_report, :time), class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+      </div>
+      <div class="mx-6">
+        <%= form.label "user[study_preferences][weekly_progress_report][day]", "Report Day", class: "text-sm font-medium text-gray-700"  %>
+        <%= form.select "user[study_preferences][weekly_progress_report][day]" ,%w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday], class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+      </div>
     </div>
-  </div>
-
-  <div class="my-5">
-    <p>Weekly progress report</p>
-    <div class="mx-6">
-      <%= form.label "user[study_preferences][weekly_progress_report][enabled]", "Enabled", class: "text-sm font-medium text-gray-700"  %>
-      <%= form.checkbox "user[study_preferences][weekly_progress_report][enabled]", checked: Current.user.preference(:weekly_progress_report, :enabled)%>
-    </div>
-    <div class="mx-6">
-      <%= form.label "user[study_preferences][weekly_progress_report][time]", "Time", class: "text-sm font-medium text-gray-700"  %>
-      <%= form.time_field "user[study_preferences][weekly_progress_report][time]", value:  Current.user.preference(:weekly_progress_report, :time), class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
-    </div>
-    <div class="mx-6">
-      <%= form.label "user[study_preferences][weekly_progress_report][day]", "Report Day", class: "text-sm font-medium text-gray-700"  %>
-      <%= form.select "user[study_preferences][weekly_progress_report][day]" ,%w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday], class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
-    </div>
-  </div>
-
-  <div class="my-5">
-    <%= form.label "user[study_preferences][week_start_day]", "Week starts on", class: "text-sm font-medium text-gray-700"  %>
-    <%= form.select "user[study_preferences][week_start_day]",
+    <div class="my-5">
+      <%= form.label "user[study_preferences][week_start_day]", "Week starts on", class: "text-sm font-medium text-gray-700"  %>
+      <%= form.select "user[study_preferences][week_start_day]",
       %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday] , class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
-  </div>
+    </div>
     <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
       <div class="inline">
         <%= form.submit "Save settings", class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
       </div>
-
       <div class="mt-4 text-sm text-gray-500 sm:mt-0">
         <%= link_to "Back to Dashboard", dashboard_show_path, class: "text-gray-700 underline" %>
       </div>
