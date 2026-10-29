@@ -51,9 +51,13 @@ class UserTest < ActiveSupport::TestCase
 
   test "reads preferences by string or symbol key" do
     user = users(:one)
-    user.study_preferences = { "week_start_day" => "Wednesday" }
+    user.study_preferences = {
+      "week_start_day" => "Wednesday",
+      "daily_reminder_notification" => { "enabled" => true }
+    }
 
     assert_equal "Wednesday", user.preference(:study_preferences, :week_start_day)
     assert_equal "Wednesday", user.preference(:study_preferences, "week_start_day")
+    assert_equal true, user.preference(:daily_reminder_notification, :enabled)
   end
 end

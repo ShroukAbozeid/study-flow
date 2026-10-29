@@ -28,6 +28,12 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   def preference(section, key)
-    (public_send(section) || {}).with_indifferent_access[key]
+    settings = if respond_to?(section)
+      public_send(section)
+    else
+      study_preferences&.with_indifferent_access&.[](section)
+    end
+
+    (settings || {}).with_indifferent_access[key]
   end
 end

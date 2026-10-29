@@ -16,3 +16,14 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+module ControllerTestHelpers
+  def sign_in_as(user = users(:one))
+    user.update!(password: "test-password")
+    post session_path, params: { email_address: user.email_address, password: "test-password" }
+  end
+end
+
+ActiveSupport.on_load(:action_dispatch_integration_test) do
+  include ControllerTestHelpers
+end
