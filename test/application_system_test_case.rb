@@ -12,7 +12,7 @@ require "minitest/rails/capybara"
 require "test_helper"
 
 WINDOWS_HOST = `cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }'`.strip
-CHROMEDRIVER_URL = "http://#{WINDOWS_HOST}:9515/"
+CHROMEDRIVER_URL = "http://172.19.0.1:9515/"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium_remote_chrome
