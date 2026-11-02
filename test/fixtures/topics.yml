@@ -9,3 +9,9 @@ two:
   name: Second topic
   estimated_hours: 2
   position: 1
+
+three:
+  study_plan: two
+  name: Third topic
+  estimated_hours: 1
+  position: 2

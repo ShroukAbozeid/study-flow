@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+has_secure_password
   DEFAULT_STUDY_PREFERENCES = {
     daily_reminder_notification: {
        enabled: true,
@@ -12,7 +13,6 @@ class User < ApplicationRecord
      week_start_day: "Monday"
   }
 
-  has_secure_password
   has_one_attached :avatar
 
   has_many :sessions, dependent: :destroy

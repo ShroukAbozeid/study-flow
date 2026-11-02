@@ -30,7 +30,7 @@ class ReportSchedulerJobTest < ActiveJob::TestCase
       user = users(:one)
       user.update!(time_zone: "UTC")
       disable_weekly_reports_for(users(:two))
-      user.reports.create!(name: "weekly_progress", created_at: Time.current)
+      ReportGenerator.new(user:, name: "weekly_progress").call
 
       assert_no_enqueued_jobs(only: WeeklyProgressReportJob) do
         ReportSchedulerJob.perform_now

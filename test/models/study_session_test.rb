@@ -10,7 +10,7 @@ class StudySessionTest < ActiveSupport::TestCase
   end
 
   test "scopes active sessions" do
-    assert_equal [ study_sessions(:active) ], StudySession.active.to_a
+    assert_equal [ study_sessions(:active), study_sessions(:other_user) ], StudySession.active.to_a
   end
 
   test "scopes sessions completed on a date" do
@@ -33,7 +33,7 @@ class StudySessionTest < ActiveSupport::TestCase
   end
 
   test "allows a session when the topic has no active sessions" do
-    study_session = StudySession.new(topic: topics(:two),
+    study_session = StudySession.new(topic: topics(:three),
                                      title: "Another completed session",
                                      finished_at: Time.current)
 

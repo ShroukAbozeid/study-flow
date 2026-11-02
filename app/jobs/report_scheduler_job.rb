@@ -19,7 +19,7 @@ class ReportSchedulerJob < ApplicationJob
     report_time = zone.local(date.year, date.month, date.day, time.to_i, time.split(":")[1].to_i)
     return false if zone.now < report_time # report time has not yet arrived
 
-    last_report = user.reports.where(name: "weekly_progress").order(created_at: :desc).first
+    last_report = user.reports.where(name: ::Reports::WeeklyProgress::NAME).order(created_at: :desc).first
     return false if last_report && last_report.created_at.in_time_zone(zone).to_date == date # report has already been sent today
 
     true

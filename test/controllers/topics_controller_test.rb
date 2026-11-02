@@ -59,4 +59,41 @@ class TopicsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to edit_study_plan_path(study_plans(:one))
   end
+
+  test "does not render a topic form for another user's study plan" do
+    get new_topic_path, params: { study_plan_id: study_plans(:two).id }
+
+    assert_response :not_found
+  end
+
+  test "does not create a topic under another user's study plan" do
+    assert_no_difference("Topic.count") do
+      post topics_path, params: {
+        topic: { name: "Unauthorized topic", estimated_hours: 2, study_plan_id: study_plans(:two).id }
+      }
+    end
+
+    assert_response :not_found
+  end
+
+  test "does not render another user's topic edit form" do
+    get edit_topic_path(topics(:two))
+
+    assert_response :not_found
+  end
+
+  test "does not update another user's topic" do
+    patch topic_path(topics(:two)), params: { topic: { name: "Unauthorized update" } }
+
+    assert_response :not_found
+    assert_equal "Second topic", topics(:two).reload.name
+  end
+
+  test "does not delete another user's topic" do
+    assert_no_difference("Topic.count") do
+      delete topic_path(topics(:two))
+    end
+
+    assert_response :not_found
+  end
 end

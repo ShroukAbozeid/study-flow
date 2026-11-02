@@ -1,13 +1,16 @@
 class StudyPlansController < ApplicationController
   def show
-    @study_plan = Current.user.study_plans.find(params[:id])
+    @study_plan = current_user.study_plans.find(params[:id])
   end
   def new
-    @study_plan = Current.user.study_plans.build
+    @study_plan = current_user.study_plans.build
   end
 
+  def edit
+    @study_plan = current_user.study_plans.find(params[:id])
+  end
   def create
-    @study_plan = Current.user.study_plans.build(study_plan_params)
+    @study_plan = current_user.study_plans.build(study_plan_params)
     if @study_plan.save
       redirect_to dashboard_show_path, notice: "Study plan created successfully."
     else
@@ -15,12 +18,9 @@ class StudyPlansController < ApplicationController
     end
   end
 
-  def edit
-    @study_plan = Current.user.study_plans.find(params[:id])
-  end
 
   def update
-    @study_plan = Current.user.study_plans.find(params[:id])
+    @study_plan = current_user.study_plans.find(params[:id])
     if @study_plan.update(study_plan_params)
       redirect_to study_plan_path(@study_plan), notice: "Study plan updated successfully."
     else
@@ -29,7 +29,7 @@ class StudyPlansController < ApplicationController
   end
 
   def destroy
-    @study_plan = Current.user.study_plans.find(params[:id])
+    @study_plan = current_user.study_plans.find(params[:id])
     @study_plan.destroy
     redirect_to dashboard_show_path, notice: "Study plan deleted successfully."
   end
