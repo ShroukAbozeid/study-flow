@@ -1,5 +1,5 @@
 <p>
-  You can reset your password on
-  <%= link_to "this password reset page", edit_password_url(@user.password_reset_token) %>.
-  This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+  <%= t("mailers.passwords.reset.instructions_html",
+        reset_link: link_to(t("mailers.passwords.reset.link_text"), edit_password_url(@user.password_reset_token)),
+        expiration: distance_of_time_in_words(0, @user.password_reset_token_expires_in)) %>
 </p>

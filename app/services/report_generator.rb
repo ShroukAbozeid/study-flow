@@ -10,7 +10,7 @@ class ReportGenerator
 
   def call
     csv_data = generate_csv
-    Report.create(user:, name: class_name.constantize::NAME).tap do |report|
+    Report.create(user:, name: report_class.report_name).tap do |report|
       report.file.attach(io: StringIO.new(csv_data), filename: file_name, content_type: "text/csv")
     end
   end
@@ -20,8 +20,12 @@ class ReportGenerator
   def generate_csv
     data = class_name.constantize.generate(@user)
     CSV.generate(headers: true) do |csv|
-      csv <<  class_name.constantize::COLUMNS
+      csv << report_class.columns
       csv << data.values
     end
+  end
+
+  def report_class
+    class_name.constantize
   end
 end

@@ -1,6 +1,6 @@
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_registration_path, alert: "Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_registration_path, alert: t("controllers.shared.rate_limited") }
 
   def new
     @user = User.new
@@ -11,10 +11,10 @@ class RegistrationsController < ApplicationController
 
     if @user.save
       start_new_session_for @user
-      redirect_to after_authentication_url, notice: "Welcome! Your account has been created."
+      redirect_to after_authentication_url, notice: t("controllers.registrations.created")
     else
       flash[:alert] = @user.errors.full_messages.join(", ")
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

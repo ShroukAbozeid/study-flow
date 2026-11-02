@@ -14,8 +14,8 @@ class TopicsController < ApplicationController
 
     if @topic.save
       respond_to do |format|
-        format.turbo_stream { flash.now[:notice] = "Topic created successfully." }
-        format.html { redirect_to edit_study_plan_path(@study_plan), notice: "Topic created successfully." }
+        format.turbo_stream { flash.now[:notice] = t("controllers.topics.created") }
+        format.html { redirect_to edit_study_plan_path(@study_plan), notice: t("controllers.topics.created") }
       end
     else
       flash[:alert] = @topic.errors.full_messages.join(", ")
@@ -27,8 +27,8 @@ class TopicsController < ApplicationController
   def update
     if @topic.update(topic_params)
        respond_to do |format|
-        format.turbo_stream { flash.now[:notice] = "Topic updated successfully." }
-        format.html { redirect_to edit_study_plan_path(@topic.study_plan), notice: "Topic updated successfully." }
+        format.turbo_stream { flash.now[:notice] = t("controllers.topics.updated") }
+        format.html { redirect_to edit_study_plan_path(@topic.study_plan), notice: t("controllers.topics.updated") }
       end
     else
       flash[:alert] = @topic.errors.full_messages.join(", ")
@@ -39,8 +39,8 @@ class TopicsController < ApplicationController
   def destroy
     @topic.destroy
     respond_to do |format|
-      format.turbo_stream { flash.now[:notice] = "Topic deleted successfully." }
-      format.html { redirect_to edit_study_plan_path(@topic.study_plan), notice: "Topic deleted successfully." }
+      format.turbo_stream { flash.now[:notice] = t("controllers.topics.deleted") }
+      format.html { redirect_to edit_study_plan_path(@topic.study_plan), notice: t("controllers.topics.deleted") }
     end
   end
 

@@ -7,7 +7,7 @@ class StudySession < ApplicationRecord
   validate :only_one_session_active, on: :create
 
   scope :active, -> { where(finished_at: nil) }
-  scope :completed_at, ->(date) { where(finished_at: date.beginning_of_day..date.end_of_day) }
+  scope :completed_at, ->(date) { where(finished_at: date.all_day) }
   scope :of_user, ->(user) { joins(topic: :study_plan).where(study_plans: { user_id: user.id }) }
 
 
@@ -58,6 +58,6 @@ class StudySession < ApplicationRecord
 
   def only_one_session_active
     return if topic.study_sessions.active.empty?
-    errors.add(:base, "There is already an active study session for this topic.")
+    errors.add(:base, I18n.t("models.study_session.errors.already_active"))
   end
 end

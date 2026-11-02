@@ -1,8 +1,14 @@
 module Reports
   class WeeklyProgress < Report
-    NAME = "Weekly Progress"
-    COLUMNS = %w[completed started started_and_completed_this_week].freeze
     FILE_NAME = "weekly_progress".freeze
+
+    def self.report_name
+      I18n.t("models.reports.weekly_progress.name")
+    end
+
+    def self.columns
+      I18n.t("models.reports.weekly_progress.columns")
+    end
 
     def self.generate(user)
       week_start = (user.study_preferences["week_start_day"] || "Monday").downcase.to_sym

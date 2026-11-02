@@ -4,7 +4,7 @@ class Settings::StudyPreferencesController < ApplicationController
 
   def update
     if current_user.update(study_preferences_params)
-      redirect_to settings_study_preferences_path, notice: "Settings saved."
+      redirect_to settings_study_preferences_path, notice: t("controllers.settings.study_preferences_saved")
     else
       flash.now[:alert] = current_user.errors.full_messages.join(", ")
       render :show, status: :unprocessable_content

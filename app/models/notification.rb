@@ -5,8 +5,7 @@ class Notification < ApplicationRecord
   scope :newest_first, -> { order(created_at: :desc) }
   scope :unread, -> { where(read: false) }
 
-  after_create_commit :broadcast_unread_count
-  after_update_commit :broadcast_unread_count
+  after_save_commit :broadcast_unread_count
 
   private
 

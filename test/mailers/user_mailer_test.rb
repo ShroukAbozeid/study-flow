@@ -24,7 +24,7 @@ class UserMailerTest < ActionMailer::TestCase
     email = UserMailer.with(user:, report:).report_email
 
     assert_equal [ user.email_address ], email.to
-    assert_equal "Your Weekly Progress Report is Ready", email.subject
+    assert_equal I18n.t("mailers.user.report_email.subject"), email.subject
     assert_includes email.body.encoded, report.name
     attachment = email.attachments["weekly_progress.csv"]
     assert_equal "text/csv", attachment.mime_type

@@ -14,8 +14,8 @@ class StudySessionsController < ApplicationController
     @study_session = @topic.study_sessions.new(study_session_params)
     if @study_session.save
       respond_to do |format|
-        format.turbo_stream { flash.now[:notice] = "Study session created successfully." }
-        format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: "Study session created successfully." }
+        format.turbo_stream { flash.now[:notice] = t("controllers.study_sessions.created") }
+        format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: t("controllers.study_sessions.created") }
       end
     else
       flash[:alert] = @study_session.errors.full_messages.join(", ")
@@ -27,8 +27,8 @@ class StudySessionsController < ApplicationController
   def update
     if @study_session.update(study_session_params)
       respond_to do |format|
-        format.turbo_stream { flash.now[:notice] = "Study session updated successfully." }
-        format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: "Study session updated successfully." }
+        format.turbo_stream { flash.now[:notice] = t("controllers.study_sessions.updated") }
+        format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: t("controllers.study_sessions.updated") }
       end
     else
       flash[:alert] = @study_session.errors.full_messages.join(", ")
@@ -40,10 +40,10 @@ class StudySessionsController < ApplicationController
     if @study_session.update(finished_at: Time.current)
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:notice] = "Study session completed successfully."
+          flash.now[:notice] = t("controllers.study_sessions.completed")
           render :update
         end
-        format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: "Study session updated successfully." }
+        format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: t("controllers.study_sessions.updated") }
       end
     else
       flash[:alert] = @study_session.errors.full_messages.join(", ")
@@ -54,8 +54,8 @@ class StudySessionsController < ApplicationController
   def destroy
     @study_session.destroy
     respond_to do |format|
-      format.turbo_stream { flash.now[:notice] = "Study session deleted successfully." }
-      format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: "Study session deleted successfully." }
+      format.turbo_stream { flash.now[:notice] = t("controllers.study_sessions.deleted") }
+      format.html { redirect_to edit_study_plan_path(@study_session.study_plan), notice: t("controllers.study_sessions.deleted") }
     end
   end
 

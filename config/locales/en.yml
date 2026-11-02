@@ -28,4 +28,60 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  controllers:
+    shared:
+      rate_limited: "Try again later."
+    notifications:
+      all_marked_read: "All notifications marked as read."
+    passwords:
+      reset_requested: "Password reset instructions sent (if user with that email address exists)."
+      reset: "Password has been reset."
+      password_mismatch: "Passwords did not match."
+      invalid_reset_link: "Password reset link is invalid or has expired."
+    registrations:
+      created: "Welcome! Your account has been created."
+    sessions:
+      invalid_credentials: "Try another email address or password."
+    settings:
+      profile_updated: "Profile updated successfully."
+      study_preferences_saved: "Settings saved."
+    study_plans:
+      created: "Study plan created successfully."
+      updated: "Study plan updated successfully."
+      deleted: "Study plan deleted successfully."
+    study_sessions:
+      created: "Study session created successfully."
+      updated: "Study session updated successfully."
+      completed: "Study session completed successfully."
+      deleted: "Study session deleted successfully."
+    topics:
+      created: "Topic created successfully."
+      updated: "Topic updated successfully."
+      deleted: "Topic deleted successfully."
+  models:
+    study_session:
+      errors:
+        already_active: "There is already an active study session for this topic."
+    notifications:
+      daily_reminder:
+        title: "Daily Reminder"
+        content: "Don't forget to check your study plan today!\nYou have %{study_plan_count} study plans.\nAnd %{active_session_count} active sessions."
+    reports:
+      weekly_progress:
+        name: "Weekly Progress"
+        columns:
+          - "completed"
+          - "started"
+          - "started_and_completed_this_week"
+  mailers:
+    passwords:
+      reset:
+        subject: "Reset your password"
+        link_text: "this password reset page"
+        instructions_html: "You can reset your password on %{reset_link}. This link will expire in %{expiration}."
+        instructions_text: "You can reset your password on %{reset_url}. This link will expire in %{expiration}."
+    user:
+      report_email:
+        subject: "Your Weekly Progress Report is Ready"
+        greeting: "Hello,"
+        attachment_message: "Please find the attached report:"

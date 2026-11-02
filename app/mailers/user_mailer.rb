@@ -8,6 +8,6 @@ class UserMailer < ApplicationMailer
     @user = params[:user]
     @report = params[:report]
     attachments[@report.file.filename.to_s] = @report.file.download
-    mail(to: @user.email_address, subject: "Your Weekly Progress Report is Ready")
+    mail(to: @user.email_address, subject: I18n.t("mailers.user.report_email.subject"))
   end
 end

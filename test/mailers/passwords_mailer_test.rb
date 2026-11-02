@@ -8,7 +8,7 @@ class PasswordsMailerTest < ActionMailer::TestCase
         email = PasswordsMailer.reset(user)
 
         assert_equal [ user.email_address ], email.to
-        assert_equal "Reset your password", email.subject
+        assert_equal I18n.t("mailers.passwords.reset.subject"), email.subject
         assert_equal "from@example.com", email.from.first
         assert_includes email.body.encoded, "http://example.com/passwords/reset-token/edit"
       end

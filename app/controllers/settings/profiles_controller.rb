@@ -4,7 +4,7 @@ class Settings::ProfilesController < ApplicationController
 
   def update
     if current_user.update(profile_params)
-      redirect_to settings_profile_path, notice: "Profile updated successfully."
+      redirect_to settings_profile_path, notice: t("controllers.settings.profile_updated")
     else
       flash.now[:alert] = current_user.errors.full_messages.join(", ")
       render :show, status: :unprocessable_content
@@ -14,6 +14,6 @@ class Settings::ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.require(:user).permit(:name, :avatar, :time_zone)
+    params.expect(user: [ :name, :avatar, :time_zone ])
   end
 end
