@@ -14,15 +14,15 @@ class StudyWorkflowSystemTest < ApplicationSystemTestCase
     fill_in "study_plan_name", with: "System test plan"
     click_on "Create Study Plan"
 
-    plan = User.find_by!(email_address: "system-user@example.com").study_plans.find_by!(name: "System test plan")
     assert_text "System test plan"
+    plan = User.find_by!(email_address: "system-user@example.com").study_plans.find_by!(name: "System test plan")
 
     click_on "System test plan"
     click_on "Add a Topic"
     fill_in "topic_name", with: "System test topic"
     fill_in "topic_estimated_hours", with: "2"
     click_on "Add Topic"
-
+    assert_text "System test topic"
     visit study_plan_path(plan)
     assert_text "System test topic"
     click_on "Start a study session"
