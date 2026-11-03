@@ -39,7 +39,7 @@ class StudyPlansControllerTest < ActionDispatch::IntegrationTest
       post study_plans_path, params: { study_plan: { name: "" } }
     end
 
-    assert_response :success
+    assert_response :unprocessable_content
   end
 
   test "renders the edit study plan form" do
