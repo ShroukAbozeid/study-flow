@@ -19,15 +19,18 @@
       <div class="my-2 mr-2">
         <%= form.label :resources, "Resources", class: "block text-sm font-medium text-gray-700" %>
         <ul>
-          <% @topic.resources.each do |resource| %>
+          <% @topic.resources.attachments.select(&:persisted?).each do |attachment| %>
+            <% resource = attachment.blob %>
             <li><%= link_to resource.filename.to_s, url_for(resource), target: "_blank" %></li>
           <% end %>
         </ul>
-        <% @topic.resources.each do |resource| %>
+        <% @topic.resources.attachments.select(&:persisted?).each do |attachment| %>
+          <% resource = attachment.blob %>
           <%= form.hidden_field :resources, multiple: true, value: resource.signed_id %>
         <% end %>
         <%= form.label :resources, "Add New Resources", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.file_field :resources, multiple: true %>
+        <p>PDF, Word, PowerPoint, Excel, image, and text files up to 20 MB each (10 files maximum).</p>
+        <%= form.file_field :resources, multiple: true, accept: Topic::RESOURCE_CONTENT_TYPES.join(",") %>
       </div>
       <div class="col-span-6 sm:flex sm:items-center sm:gap-4 mt-2">
         <div class="inline">

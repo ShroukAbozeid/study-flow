@@ -77,4 +77,16 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to new_password_path
   end
+
+  test "invalidates a reset token after the password changes" do
+    user = users(:one)
+    user.update!(password: "current-password")
+    token = user.password_reset_token
+
+    user.update!(password: "new-password")
+
+    assert_raises(ActiveSupport::MessageVerifier::InvalidSignature) do
+      User.find_by_password_reset_token!(token) # rubocop:disable Rails/DynamicFindBy
+    end
+  end
 end

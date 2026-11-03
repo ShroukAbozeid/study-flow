@@ -96,4 +96,17 @@ class TopicsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "shows a resource validation error in the topic form" do
+    upload = Rack::Test::UploadedFile.new(
+      StringIO.new("<html></html>"),
+      "text/html",
+      original_filename: "resource.html"
+    )
+
+    patch topic_path(topics(:one)), params: { topic: { resources: [ upload ] } }
+
+    assert_response :unprocessable_entity
+    assert_includes response.body, "has an unsupported file type"
+  end
 end

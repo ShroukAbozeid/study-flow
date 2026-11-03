@@ -34,7 +34,7 @@ The main user journey is:
 | [`db/`](./db/) | PostgreSQL schema, migrations, seeds, and Solid Queue/Cache/Cable schemas. |
 | [`test/`](./test/) | Minitest model, controller/request, mailer, job, integration, and system tests with YAML fixtures. |
 
-The README is still the Rails-generated starter text; it does not yet explain setup, required services, scheduled jobs, or how to run browser tests.
+The README documents setup, required services, scheduled jobs, production configuration, and test commands, including browser-test requirements.
 
 ## Domain model
 
@@ -56,7 +56,7 @@ The [`Authentication` concern](./app/controllers/concerns/authentication.rb) pro
 
 ### Study plans, topics, and sessions
 
-The dashboard loads the current user’s plans and their active and recently completed sessions. Study-plan reads and writes are scoped through `Current.user`. Topic and study-session actions use unscoped record lookups; this inconsistency is a priority issue below.
+The dashboard loads the current user’s plans and their active and recently completed sessions. Study-plan, topic, and study-session reads and writes are scoped through the current user’s associations. Parent records for new topics and sessions are resolved through those scoped associations.
 
 Study sessions broadcast changes through Turbo Streams. A model validation prevents a second active session for the same topic during ordinary sequential requests.
 
@@ -66,7 +66,7 @@ Notifications can be listed, shown, marked read/unread, or bulk-marked read. The
 
 ### Reminders and reports
 
-[`config/recurring.yml`](./config/recurring.yml) defines daily reminder and hourly report-scheduler entries for development. The daily job queues reminder jobs for eligible users with study plans. The report scheduler checks each eligible user’s configured day/time and queues the weekly report job. The report job generates a CSV, attaches it to a report, and emails it.
+[`config/recurring.yml`](./config/recurring.yml) defines a per-minute daily-reminder dispatcher and hourly report-scheduler entries for development and production. The dispatcher queues reminder jobs for eligible users with study plans once their configured local time arrives. It accounts for each user's timezone, catches up after a skipped spring-forward time, and avoids another reminder on the same local date during a repeated fall-back hour. The report scheduler checks each eligible user’s configured day/time and queues the weekly report job. The report job generates a CSV, attaches it to a report, and emails it.
 
 ### Storage and infrastructure
 
@@ -83,7 +83,7 @@ The test suite includes:
 - An integration test covering sign-in through completing a study session.
 - A Selenium/Capybara system test covering sign-up through completing a study session.
 
-The current tests do not cover all scenarios listed below. The system-test base uses headless Chrome, so executing browser tests requires Chrome and a compatible Selenium setup. The current GitHub Actions workflow and [`config/ci.rb`](./config/ci.rb) run lint/security checks but do not invoke the Rails test suite.
+The test suite covers the behaviors listed below. The system-test base uses headless Chrome, so executing browser tests requires Chrome and a compatible Selenium setup. GitHub Actions runs the Rails suite and system tests against PostgreSQL; [`config/ci.rb`](./config/ci.rb) includes those same test commands.
 
 ## Prioritized work
 
@@ -91,72 +91,55 @@ Priority meanings: **P1** = high impact; address before relying on the affected 
 
 ### P1 — High priority
 
-1. **Enforce ownership for topics and study sessions**
-   - [`TopicsController`](./app/controllers/topics_controller.rb) uses `Topic.find` for edit/update/delete and accepts `study_plan_id` directly when creating a topic.
-   - [`StudySessionsController`](./app/controllers/study_sessions_controller.rb) uses `StudySession.find` for read/update/complete/delete and accepts `topic_id` directly when creating a session.
-   - These paths do not constrain the target plan/topic/session to `Current.user`, unlike the study-plan and notification paths. This can expose or modify another user’s records.
-   - **Handle:** scope every read and mutation through the current user’s plans/topics/sessions, and derive parent ownership from the scoped association rather than trusting submitted foreign keys.
-   - **Add tests:** cross-user show/edit/update/delete/complete requests and attempts to create a topic/session under another user’s parent record must be rejected without changing data.
+1. **Enforce ownership for topics and study sessions — implemented**
+   - Both controllers find records through the current user's associations and resolve parent records through scoped associations.
+   - Controller tests cover cross-user show/edit/update/delete/complete requests and attempts to create records under another user's parent.
 
-2. **Complete password-reset token support**
-   - [`PasswordsController`](./app/controllers/passwords_controller.rb) looks up users by `password_reset_token`, but [`User`](./app/models/user.rb) does not declare a token generator and the users schema has no corresponding persisted column.
-   - The mailer test stubs token methods, so it only verifies template rendering and does not establish that the real user model can issue or validate a reset token.
-   - **Handle:** implement Rails token generation with expiration and bind token validity to password changes; make invalid/expired tokens return a deliberate response.
-   - **Add tests:** request, valid token display, successful password change, mismatched confirmation, invalid/expired token, and invalidation of existing sessions after reset.
+2. **Complete password-reset token support — implemented**
+   - [`User`](./app/models/user.rb) generates signed password-reset tokens with a 15-minute expiration and invalidates them when the password changes.
+   - The controller returns a deliberate redirect for invalid or expired links and destroys existing sessions after a successful reset.
+   - Controller and mailer tests exercise real tokens, expiry, password mismatch, and session invalidation.
 
-3. **Verify recurring reminders and reports in production**
-   - [`config/recurring.yml`](./config/recurring.yml) now includes daily reminders and the report scheduler in `production`, in addition to the Solid Queue cleanup task.
-   - Regression tests in [`recurring_jobs_configuration_test.rb`](./test/jobs/recurring_jobs_configuration_test.rb) check that both schedules are present.
-   - **Remaining:** verify the production queue supervisor registers and processes these recurring tasks in a production-like deployment.
+3. **Verify recurring reminders and reports in production — configuration verified**
+   - [`config/recurring.yml`](./config/recurring.yml) includes both jobs in production, and [`config/deploy.yml`](./config/deploy.yml) enables the Solid Queue supervisor in Puma.
+   - Regression tests check the production schedules and supervisor setting. Actual queue processing still requires verification in a production-like deployment.
 
-4. **Prevent duplicate weekly reports**
-   - [`ReportSchedulerJob`](./app/jobs/report_scheduler_job.rb) now checks against `Reports::WeeklyProgress::NAME`, the same name [`ReportGenerator`](./app/services/report_generator.rb) persists.
-   - The scheduler regression test now generates the report through `ReportGenerator` before checking that another job is not enqueued.
-   - **Remaining:** retain this test when changing report naming, persistence, or scheduler behavior.
+4. **Prevent duplicate weekly reports — implemented**
+   - [`ReportSchedulerJob`](./app/jobs/report_scheduler_job.rb) checks against the same report name persisted by [`ReportGenerator`](./app/services/report_generator.rb).
+   - The scheduler regression test creates a report through the generator and verifies that another job is not enqueued that day.
 
-5. **Run the Rails tests in CI**
-   - [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs Brakeman, Bundler Audit, Importmap audit, and RuboCop, but no test command.
-   - [`config/ci.rb`](./config/ci.rb) likewise does not include `bin/rails test`.
-   - **Handle:** add a CI test step for the request/model/job/mailer/integration suites. Add a browser-capable job or document a separate supported system-test runner so system tests are not silently omitted.
+5. **Run the Rails tests in CI — implemented**
+   - [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) starts PostgreSQL and runs both `bin/rails test` and `bin/rails test:system`.
+   - [`config/ci.rb`](./config/ci.rb) includes the Rails and system test commands.
 
 ### P2 — Important behavior and validation
 
-6. **Honor each user’s daily reminder time**
-   - `daily_reminder_notification.time` is stored and editable, but [`DailyReminderJob`](./app/jobs/daily_reminder_job.rb) only checks the enabled flag. The recurring task runs once globally at 8am in development.
-   - **Handle:** schedule per-user deliveries at their configured local time, including timezone and daylight-saving transitions, or explicitly remove/rename the unused setting if a global send time is intended.
-   - **Add tests:** users in different time zones, configured times, disabled reminders, and daylight-saving boundaries.
+6. **Honor each user’s daily reminder time — implemented**
+   - [`DailyReminderJob`](./app/jobs/daily_reminder_job.rb) is dispatched every minute in development and production, and queues enabled users with study plans once their configured local time arrives.
+   - The job uses each user's timezone, catches up when a configured time is skipped during spring-forward, and checks for an existing reminder on that user's local date to avoid sending twice during fall-back.
+   - [`daily_reminder_job_test.rb`](./test/jobs/daily_reminder_job_test.rb) covers per-user times across time zones, disabled reminders, multiple plans, and both DST transitions.
 
-7. **Validate study preference JSON**
-   - [`Settings::StudyPreferencesController`](./app/controllers/settings/study_preferences_controller.rb) permits preference values but does not validate day names, time formats, or enabled values.
-   - [`ReportSchedulerJob`](./app/jobs/report_scheduler_job.rb) parses stored time strings; malformed or missing values can cause failed jobs or prevent reports from running as intended.
-   - **Handle:** validate allowed weekdays, `HH:MM` times, and boolean settings while preserving defaults for omitted values.
-   - **Add tests:** malformed time, missing nested keys, unexpected day, and partial preference updates.
+7. **Validate study preference JSON — implemented**
+   - [`User`](./app/models/user.rb) normalizes partial JSON preferences against defaults and validates weekdays, `HH:MM` values, and boolean settings.
+   - Controller tests cover malformed values and partial updates that omit nested keys.
 
-8. **Implement the notification detail page**
-   - The notification show route and action exist, but [`app/views/notifications/show.html.erb`](./app/views/notifications/show.html.erb) is still a generated placeholder.
-   - **Handle:** display the selected notification and provide appropriate navigation/read-state behavior, or remove the unused show route.
-   - **Add test:** assert meaningful notification content in the rendered page, not only a successful HTTP status.
+8. **Remove the unused notification detail route — implemented**
+   - The unused show action and route are removed; a controller test verifies that notification detail URLs return 404.
 
-9. **Enforce the active-session invariant under concurrent requests**
-   - The “one active session per topic” rule is an application-level validation in [`StudySession`](./app/models/study_session.rb). Two concurrent create requests can both pass the validation before either commits.
-   - **Handle:** enforce the invariant at the persistence layer where practical (for PostgreSQL, consider a partial unique index on active rows) and handle the resulting conflict cleanly.
-   - **Add test:** verify concurrent or database-conflict behavior in addition to the current sequential validation test.
+9. **Enforce the active-session invariant under concurrent requests — implemented**
+   - A partial unique index enforces one unfinished session per topic in PostgreSQL, and the create action renders a validation response if a concurrent insert wins the race.
+   - A model test verifies the database rejects a duplicate even when model validation is bypassed.
 
 ### P3 — Hardening and scale
 
-10. **Add upload constraints**
-    - User avatars and topic resources use Active Storage, but model-level file type and size constraints are not defined.
-    - **Handle:** set acceptable content types and size limits and present validation errors in the upload forms.
-    - **Add tests:** disallowed types, oversized files, and valid uploads.
+10. **Add upload constraints — implemented**
+    - [`User`](./app/models/user.rb) limits avatars to supported image formats and 5 MB.
+    - [`Topic`](./app/models/topic.rb) limits resources to supported document/image/text formats, 20 MB per file, and 10 files.
+    - Forms describe the limits and constrain the file-picker types; model tests cover rejected types, oversized files, and valid uploads.
 
-11. **Finish setup and operations documentation**
-    - [`README.md`](./README.md) is Rails starter text.
-    - **Handle:** document Ruby/PostgreSQL requirements, setup and migrations, environment variables, storage/queue services, recurring-job setup, test commands, and the Chrome requirement for system tests.
+11. **Finish setup and operations documentation — implemented**
+    - [`README.md`](./README.md) documents requirements, setup, database migrations, production secrets, storage and queue behavior, recurring jobs, test commands, and Chrome/Selenium requirements.
 
-## Suggested order
+## Remaining operational verification
 
-1. Close ownership boundaries and complete password reset.
-2. Fix weekly-report deduplication and enable production schedules.
-3. Add CI test execution and run browser tests in an environment with Chrome.
-4. Validate preferences and honor per-user reminder times.
-5. Complete notification details and then address persistence-level concurrency and upload hardening.
+The production schedules and queue-supervisor setting are covered by configuration tests, but successful processing should still be confirmed in a production-like deployment.

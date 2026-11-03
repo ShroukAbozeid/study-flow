@@ -3,7 +3,9 @@ class Settings::StudyPreferencesController < ApplicationController
   end
 
   def update
-    if current_user.update(study_preferences_params)
+    preferences = current_user.study_preferences.deep_merge(study_preferences_params[:study_preferences].to_h)
+
+    if current_user.update(study_preferences: preferences)
       redirect_to settings_study_preferences_path, notice: t("controllers.settings.study_preferences_saved")
     else
       flash.now[:alert] = current_user.errors.full_messages.join(", ")

@@ -39,4 +39,12 @@ class StudySessionTest < ActiveSupport::TestCase
 
     assert study_session.valid?
   end
+
+  test "database prevents duplicate active sessions when validation is bypassed" do
+    duplicate = StudySession.new(topic: topics(:one), title: "Concurrent session")
+
+    assert_raises(ActiveRecord::RecordNotUnique) do
+      duplicate.save!(validate: false)
+    end
+  end
 end

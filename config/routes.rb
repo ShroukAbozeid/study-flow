@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     resource :study_preferences, only: %i[show update]
   end
 
-  resources :notifications, only: %i[index show] do
+  resources :notifications, only: :index do
     member do
       patch :mark_read
       patch :mark_unread
@@ -13,9 +13,11 @@ Rails.application.routes.draw do
       patch :mark_all_read
     end
   end
+
   resources :study_sessions do
     patch :complete, on: :member
   end
+
   resources :study_plans
   resources :topics
   root "dashboard#show"

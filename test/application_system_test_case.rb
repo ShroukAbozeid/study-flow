@@ -11,24 +11,33 @@ require "minitest/rails/capybara"
 
 require "test_helper"
 
-WINDOWS_HOST = `cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }'`.strip
-CHROMEDRIVER_URL = "http://172.19.0.1:9515/"
-
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :selenium_remote_chrome
-    register_spec_type(self) do |desc, *addl|
-      addl.include? :system
-    end
-  Capybara.register_driver :selenium_remote_chrome do |app|
-    options = Selenium::WebDriver::Chrome::Options.new
-    options.add_argument("--start-maximized")
+  if ENV["CI"].present?
+    driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
+  else
+    chromedriver_url = ENV["CHROMEDRIVER_URL"] || begin
+      wsl_host = File.read("/etc/resolv.conf")[/^nameserver\s+(\S+)/, 1]
+      raise "Set CHROMEDRIVER_URL to the remote ChromeDriver URL" unless wsl_host
 
-    Capybara::Selenium::Driver.new(
-      app,
-      browser: :remote,
-      url: CHROMEDRIVER_URL,
-      options: options
-    )
+      "http://#{wsl_host}:9515/"
+    end
+
+    Capybara.register_driver :selenium_remote_chrome do |app|
+      options = Selenium::WebDriver::Chrome::Options.new
+      options.add_argument("--start-maximized")
+
+      Capybara::Selenium::Driver.new(
+        app,
+        browser: :remote,
+        url: chromedriver_url,
+        options: options
+      )
+    end
+    driven_by :selenium_remote_chrome
+  end
+
+  register_spec_type(self) do |_description, *addl|
+    addl.include? :system
   end
 
   Capybara.configure do |config|

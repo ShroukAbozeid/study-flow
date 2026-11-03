@@ -3,10 +3,6 @@ class NotificationsController < ApplicationController
     @notifications = current_user.notifications.newest_first
   end
 
-  def show
-    @notification = current_user.notifications.find(params.expect(:id))
-  end
-
   def mark_read
     @notification = current_user.notifications.find(params.expect(:id))
     @notification.update(read: true)

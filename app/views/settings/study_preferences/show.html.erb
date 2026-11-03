@@ -25,13 +25,13 @@
       </div>
       <div class="mx-6">
         <%= form.label "user[study_preferences][weekly_progress_report][day]", "Report Day", class: "text-sm font-medium text-gray-700"  %>
-        <%= form.select "user[study_preferences][weekly_progress_report][day]" ,%w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday], class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+        <%= form.select "user[study_preferences][weekly_progress_report][day]" ,User::WEEK_DAYS, class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
       </div>
     </div>
     <div class="my-5">
       <%= form.label "user[study_preferences][week_start_day]", "Week starts on", class: "text-sm font-medium text-gray-700"  %>
       <%= form.select "user[study_preferences][week_start_day]",
-      %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday] , class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
+      User::WEEK_DAYS , class: "shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2"%>
     </div>
     <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
       <div class="inline">

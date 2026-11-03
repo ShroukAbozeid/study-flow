@@ -58,6 +58,7 @@ class StudySession < ApplicationRecord
 
   def only_one_session_active
     return if topic.study_sessions.active.empty?
+
     errors.add(:base, I18n.t("models.study_session.errors.already_active"))
   end
 end

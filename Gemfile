@@ -56,6 +56,7 @@ group :development, :test do
   gem "minitest-rails"
   gem "capybara"
   gem "selenium-webdriver", ">= 4.11.0"
+  gem "dotenv"
 end
 
 group :development do

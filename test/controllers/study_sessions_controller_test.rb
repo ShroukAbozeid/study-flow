@@ -31,6 +31,31 @@ class StudySessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "renders a validation response when a concurrent active session insert wins" do
+    study_sessions(:active).update!(finished_at: Time.current)
+    racing_insert = ->(session) do
+      # rubocop:disable Rails/SkipsModelValidations
+      StudySession.insert_all!([ {
+        topic_id: session.topic_id,
+        title: "Concurrent session",
+        created_at: Time.current,
+        updated_at: Time.current
+      } ])
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+    StudySession.set_callback(:create, :before, racing_insert)
+
+    assert_no_difference("StudySession.active.count") do
+      post study_sessions_path,
+           params: { study_session: { title: "New session", topic_id: topics(:one).id } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_includes response.body, "There is already an active study session for this topic."
+  ensure
+    StudySession.skip_callback(:create, :before, racing_insert) if racing_insert
+  end
+
   test "shows a study session" do
     get study_session_path(study_sessions(:active))
 

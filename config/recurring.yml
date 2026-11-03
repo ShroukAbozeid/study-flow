@@ -11,7 +11,7 @@
 development:
   daily_reminder:
     class: DailyReminderJob
-    schedule: every day at 8am
+    schedule: every minute
   report_scheduler:
     class: ReportSchedulerJob
     schedule: every hour
@@ -21,7 +21,7 @@ production:
     schedule: every hour at minute 12
   daily_reminder:
     class: DailyReminderJob
-    schedule: every day at 8am
+    schedule: every minute
   report_scheduler:
     class: ReportSchedulerJob
     schedule: every hour

@@ -11,7 +11,7 @@ class StudyPlansController < ApplicationController
   end
   def create
     @study_plan = current_user.study_plans.build(study_plan_params)
-    if @study_plan.save
+    if @study_plan.save!
       redirect_to dashboard_show_path, notice: t("controllers.study_plans.created")
     else
       render :new

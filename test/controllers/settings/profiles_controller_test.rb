@@ -25,4 +25,17 @@ class Settings::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_equal "UTC", users(:one).reload.time_zone
   end
+
+  test "shows an avatar validation error in the profile form" do
+    upload = Rack::Test::UploadedFile.new(
+      StringIO.new("plain text"),
+      "text/plain",
+      original_filename: "avatar.txt"
+    )
+
+    patch settings_profile_path, params: { user: { avatar: upload } }
+
+    assert_response :unprocessable_entity
+    assert_includes response.body, "must be a PNG, JPEG, GIF, or WebP image"
+  end
 end

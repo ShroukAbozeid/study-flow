@@ -21,6 +21,10 @@ class StudySessionsController < ApplicationController
       flash[:alert] = @study_session.errors.full_messages.join(", ")
       render :new, status: :unprocessable_content
     end
+  rescue ActiveRecord::RecordNotUnique
+    @study_session.errors.add(:base, I18n.t("models.study_session.errors.already_active"))
+    flash[:alert] = @study_session.errors.full_messages.join(", ")
+    render :new, status: :unprocessable_content
   end
 
 

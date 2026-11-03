@@ -67,6 +67,22 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/study_flow_test
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: study_flow_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d study_flow_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -77,5 +93,11 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+
       - name: Run tests
         run: bin/rails test
+
+      - name: Run system tests
+        run: bin/rails test:system

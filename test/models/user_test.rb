@@ -60,4 +60,21 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Wednesday", user.preference(:study_preferences, "week_start_day")
     assert_equal true, user.preference(:daily_reminder_notification, :enabled)
   end
+
+  test "fills omitted preference keys from defaults before saving" do
+    user = users(:one)
+    user.update!(study_preferences: { week_start_day: "Wednesday" })
+
+    expected_preferences = User::DEFAULT_STUDY_PREFERENCES.deep_stringify_keys
+      .merge("week_start_day" => "Wednesday")
+    assert_equal expected_preferences, user.reload.study_preferences
+  end
+
+  test "rejects a non-object study preferences value" do
+    user = users(:one)
+    user.study_preferences = "invalid"
+
+    assert_not user.valid?
+    assert_includes user.errors[:study_preferences], "must be an object"
+  end
 end

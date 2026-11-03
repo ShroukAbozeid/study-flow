@@ -13,20 +13,6 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
                     :<, response.body.index(notifications(:earlier_unread).title)
   end
 
-  test "shows a notification" do
-    get notification_path(notifications(:read))
-
-    assert_response :success
-  end
-
-  test "does not show another user's notification" do
-    notification = Notification.create!(user: users(:two), title: "Private", content: "Private")
-
-    get notification_path(notification)
-
-    assert_response :not_found
-  end
-
   test "marks a notification as read" do
     patch mark_read_notification_path(notifications(:earlier_unread)),
           headers: { "Accept" => Mime[:turbo_stream].to_s }
@@ -55,5 +41,11 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to notifications_path
     assert_empty users(:one).notifications.unread
     assert_not other_users_notification.reload.read?
+  end
+
+  test "does not expose a notification detail route" do
+    get "/notifications/#{notifications(:earlier_unread).id}"
+
+    assert_response :not_found
   end
 end

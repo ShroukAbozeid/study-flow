@@ -73,6 +73,22 @@ en:
           - "completed"
           - "started"
           - "started_and_completed_this_week"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            avatar:
+              invalid_avatar_type: "must be a PNG, JPEG, GIF, or WebP image"
+              invalid_avatar_size: "must be 5 MB or smaller"
+            study_preferences:
+              invalid_format: "must be an object"
+              invalid_daily_reminder_enabled: "Daily Reminder Enabled must be true or false"
+              invalid_weekly_report_enabled: "Weekly Progress Report Enabled must be true or false"
+              invalid_week_start_day: "Week Start Day is invalid"
+              invalid_weekly_report_day: "Weekly Progress Report Day is invalid"
+              invalid_weekly_report_time: "Weekly Progress Report Time is invalid, use HH:MM format"
+              invalid_daily_reminder_time: "Daily Reminder Time is invalid, use HH:MM format"
   mailers:
     passwords:
       reset:
