@@ -14,6 +14,7 @@ class StudySession < ApplicationRecord
   after_create_commit :broadcast_add_to_active_sessions
   after_update_commit :broadcast_active_sessions, :broadcast_completed_sessions, if: :saved_change_to_finished_at?
   after_update_commit :broadcast_updated_session
+  before_destroy :remember_study_streak_user
   after_commit :broadcast_study_streak, if: :study_streak_changed?
 
   delegate :user, to: :study_plan
@@ -41,9 +42,10 @@ class StudySession < ApplicationRecord
   end
 
   def broadcast_study_streak
-    streak = user.refresh_current_study_streak_cache
+    streak_user = @study_streak_user || user
+    streak = streak_user.refresh_current_study_streak_cache
     Turbo::StreamsChannel.broadcast_replace_to(
-      user,
+      streak_user,
       :study_streak,
       target: "study_streak",
       partial: "dashboard/study_streak",
@@ -77,5 +79,9 @@ class StudySession < ApplicationRecord
 
   def study_streak_changed?
     previously_new_record? || saved_change_to_finished_at? || destroyed?
+  end
+
+  def remember_study_streak_user
+    @study_streak_user = user
   end
 end
