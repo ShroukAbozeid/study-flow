@@ -61,6 +61,53 @@ class UserTest < ActiveSupport::TestCase
     assert_equal true, user.preference(:daily_reminder_notification, :enabled)
   end
 
+  test "counts distinct active days in the current streak" do
+    travel_to Time.utc(2026, 11, 4, 12) do
+      study_sessions(:active).update!(started_at: Time.utc(2026, 11, 3, 10))
+      study_sessions(:completed).update!(
+        started_at: Time.utc(2026, 11, 2, 10),
+        finished_at: Time.utc(2026, 11, 4, 11)
+      )
+
+      assert_equal 3, users(:one).current_study_streak
+    end
+  end
+
+  test "keeps yesterday's streak when there is no activity today" do
+    travel_to Time.utc(2026, 11, 4, 12) do
+      study_sessions(:active).update!(started_at: Time.utc(2026, 11, 3, 10))
+      study_sessions(:completed).update!(
+        started_at: Time.utc(2026, 11, 2, 10),
+        finished_at: Time.utc(2026, 11, 2, 11)
+      )
+
+      assert_equal 2, users(:one).current_study_streak
+    end
+  end
+
+  test "uses the user's timezone when determining activity days" do
+    user = users(:one)
+    user.update!(time_zone: "Tokyo")
+
+    travel_to Time.utc(2026, 11, 4, 15) do
+      study_sessions(:active).update!(started_at: Time.utc(2026, 11, 3, 14, 59))
+      study_sessions(:completed).update!(
+        started_at: Time.utc(2026, 11, 3, 15, 1),
+        finished_at: Time.utc(2026, 11, 3, 15, 2)
+      )
+
+      assert_equal 2, user.current_study_streak
+    end
+  end
+
+  test "does not count activity from another user" do
+    travel_to Time.utc(2026, 11, 4, 12) do
+      study_sessions(:other_user).update!(started_at: Time.utc(2026, 11, 4, 10))
+
+      assert_equal 0, users(:one).current_study_streak
+    end
+  end
+
   test "fills omitted preference keys from defaults before saving" do
     user = users(:one)
     user.update!(study_preferences: { week_start_day: "Wednesday" })

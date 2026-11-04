@@ -14,6 +14,7 @@ class StudySession < ApplicationRecord
   after_create_commit :broadcast_add_to_active_sessions
   after_update_commit :broadcast_active_sessions, :broadcast_completed_sessions, if: :saved_change_to_finished_at?
   after_update_commit :broadcast_updated_session
+  after_commit :broadcast_study_streak, if: :study_streak_changed?
 
   delegate :user, to: :study_plan
 
@@ -38,6 +39,17 @@ class StudySession < ApplicationRecord
         locals: { study_session: self }
       )
   end
+
+  def broadcast_study_streak
+    Turbo::StreamsChannel.broadcast_replace_to(
+      user,
+      :study_streak,
+      target: "study_streak",
+      partial: "dashboard/study_streak",
+      locals: { streak: user.current_study_streak }
+    )
+  end
+
   def broadcast_active_sessions
       Turbo::StreamsChannel.broadcast_remove_to(
       user,
@@ -60,5 +72,9 @@ class StudySession < ApplicationRecord
     return if topic.study_sessions.active.empty?
 
     errors.add(:base, I18n.t("models.study_session.errors.already_active"))
+  end
+
+  def study_streak_changed?
+    previously_new_record? || saved_change_to_finished_at? || destroyed?
   end
 end

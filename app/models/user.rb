@@ -47,6 +47,23 @@ class User < ApplicationRecord
     (settings || {}).with_indifferent_access[key]
   end
 
+  def current_study_streak
+    active_dates = study_sessions.pluck(:started_at, :finished_at).flat_map do |started_at, finished_at|
+      [ started_at, finished_at ].compact.map { |timestamp| timestamp.in_time_zone(time_zone).to_date }
+    end.to_set
+
+    today = Time.current.in_time_zone(time_zone).to_date
+    streak_date = active_dates.include?(today) ? today : today.yesterday
+    return 0 unless active_dates.include?(streak_date)
+
+    streak = 0
+    while active_dates.include?(streak_date)
+      streak += 1
+      streak_date -= 1.day
+    end
+    streak
+  end
+
   private
 
   def normalize_study_preferences
