@@ -108,6 +108,65 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test "caches the current study streak" do
+    user = users(:one)
+    cache = ActiveSupport::Cache::MemoryStore.new
+    calls = 0
+    user.define_singleton_method(:current_study_streak) do
+      calls += 1
+      3
+    end
+
+    Rails.stub(:cache, cache) do
+      travel_to Time.utc(2026, 11, 4, 12) do
+        assert_equal 3, user.cached_current_study_streak
+        assert_equal 3, user.cached_current_study_streak
+      end
+    end
+
+    assert_equal 1, calls
+  end
+
+  test "recalculates the cached streak when the user's local date changes" do
+    user = users(:one)
+    cache = ActiveSupport::Cache::MemoryStore.new
+
+    Rails.stub(:cache, cache) do
+      travel_to Time.utc(2026, 11, 4, 12) do
+        study_sessions(:active).update!(started_at: Time.utc(2026, 11, 3, 10))
+        study_sessions(:completed).update!(
+          started_at: Time.utc(2026, 11, 2, 10),
+          finished_at: Time.utc(2026, 11, 2, 11)
+        )
+
+        assert_equal 2, user.cached_current_study_streak
+      end
+
+      travel_to Time.utc(2026, 11, 5, 12) do
+        assert_equal 0, user.cached_current_study_streak
+      end
+    end
+  end
+
+  test "uses a separate cache entry when the user's timezone changes" do
+    user = users(:one)
+    cache = ActiveSupport::Cache::MemoryStore.new
+
+    Rails.stub(:cache, cache) do
+      travel_to Time.utc(2026, 11, 4, 1) do
+        study_sessions(:active).update!(started_at: Time.utc(2026, 11, 3, 23, 30))
+        study_sessions(:completed).update!(
+          started_at: Time.utc(2026, 11, 3, 0, 30),
+          finished_at: Time.utc(2026, 11, 3, 0, 45)
+        )
+
+        assert_equal 1, user.cached_current_study_streak
+        user.update!(time_zone: "Tokyo")
+        assert_equal 2, user.cached_current_study_streak
+      end
+    end
+  end
+
   test "fills omitted preference keys from defaults before saving" do
     user = users(:one)
     user.update!(study_preferences: { week_start_day: "Wednesday" })

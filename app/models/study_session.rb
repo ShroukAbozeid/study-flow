@@ -41,12 +41,13 @@ class StudySession < ApplicationRecord
   end
 
   def broadcast_study_streak
+    streak = user.refresh_current_study_streak_cache
     Turbo::StreamsChannel.broadcast_replace_to(
       user,
       :study_streak,
       target: "study_streak",
       partial: "dashboard/study_streak",
-      locals: { streak: user.current_study_streak }
+      locals: { streak: }
     )
   end
 

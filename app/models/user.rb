@@ -64,7 +64,21 @@ class User < ApplicationRecord
     streak
   end
 
+  def cached_current_study_streak
+    Rails.cache.fetch(current_study_streak_cache_key, expires_in: 2.days) { current_study_streak }
+  end
+
+  def refresh_current_study_streak_cache
+    streak = current_study_streak
+    Rails.cache.write(current_study_streak_cache_key, streak, expires_in: 2.days)
+    streak
+  end
+
   private
+
+  def current_study_streak_cache_key
+    "users/#{id}/current_study_streak/#{time_zone}/#{Time.current.in_time_zone(time_zone).to_date}"
+  end
 
   def normalize_study_preferences
     unless study_preferences.is_a?(Hash)

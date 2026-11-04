@@ -47,4 +47,27 @@ class StudySessionTest < ActiveSupport::TestCase
       duplicate.save!(validate: false)
     end
   end
+
+  test "refreshes the cached streak before broadcasting after session changes" do
+    user = users(:one)
+    cache = ActiveSupport::Cache::MemoryStore.new
+    study_sessions(:active).update!(started_at: Time.utc(2026, 11, 3, 10))
+    study_sessions(:completed).update!(
+      started_at: Time.utc(2026, 11, 2, 10),
+      finished_at: Time.utc(2026, 11, 2, 11)
+    )
+
+    Rails.stub(:cache, cache) do
+      travel_to Time.utc(2026, 11, 4, 12) do
+        assert_equal 2, user.cached_current_study_streak
+        study_sessions(:completed).update!(finished_at: Time.current)
+
+        Turbo::StreamsChannel.stub(:broadcast_replace_to, nil) do
+          study_sessions(:completed).send(:broadcast_study_streak)
+        end
+
+        assert_equal 3, user.cached_current_study_streak
+      end
+    end
+  end
 end
